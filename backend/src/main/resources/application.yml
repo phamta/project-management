@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/collabflow
     username: postgres
-    password: your_password
+    password: 12345678
 
   jpa:
     hibernate:
@@ -17,6 +17,13 @@ spring:
 
   flyway:
     enabled: true
+
+jwt:                           # ← ĐÚNG: Đặt ngang hàng với spring
+  secret: your-very-secret-key-here-at-least-32-characters
+  expiration: 900000 # 15 minutes in milliseconds
+  refresh-expiration: 28800000 # 8 hours in milliseconds
+  header: Authorization
+  prefix: Bearer
 
 server:
   port: 8080
