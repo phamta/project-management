@@ -40,9 +40,9 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
-        String token = jwtUtil.generateToken(userDetails);
-        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        String userId = authentication.getName();
+        String token = jwtUtil.generateToken(userId);
+        String refreshToken = jwtUtil.generateRefreshToken(userId);
 
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -73,26 +73,25 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         user = userRepository.save(user);
+        String userId = user.getId();
 
         // Generate tokens
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        String token = jwtUtil.generateToken(userDetails);
-        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        String token = jwtUtil.generateToken(userId);
+        String refreshToken = jwtUtil.generateRefreshToken(userId);
 
         return new AuthResponse(token, refreshToken, mapToUserResponse(user));
     }
 
     @Override
     public AuthResponse refreshToken(String refreshToken) {
-        if (!jwtUtil.validateRefreshToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw new RuntimeException("Invalid refresh token");
         }
 
         String userId = jwtUtil.extractUserId(refreshToken);
-        UserDetails userDetails = userDetailsService.loadUserById(userId);
 
-        String newToken = jwtUtil.generateToken(userDetails);
-        String newRefreshToken = jwtUtil.generateRefreshToken(userDetails);
+        String newToken = jwtUtil.generateToken(userId);
+        String newRefreshToken = jwtUtil.generateRefreshToken(userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -110,8 +109,7 @@ public class AuthServiceImpl implements AuthService {
     public boolean validateToken(String token) {
         try {
             String userId = jwtUtil.extractUserId(token);
-            UserDetails userDetails = userDetailsService.loadUserById(userId);
-            return jwtUtil.validateToken(token, userDetails);
+            return jwtUtil.validateToken(userId);
         } catch (Exception e) {
             return false;
         }

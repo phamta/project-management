@@ -1,13 +1,10 @@
 package com.tanvan.backend.auth.security.utils;
 
-// backend/src/main/java/com/collabflow/auth/security/utils/JwtUtil.java
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -32,6 +29,8 @@ public class JwtUtil {
         byte[] keyBytes = secret.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
+    
+    // ============ EXTRACT METHODS ============
     
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -58,66 +57,41 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
     
-    public String generateToken(UserDetails userDetails) {
+    // ============ GENERATE TOKENS ============
+    
+    public String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", userDetails.getAuthorities());
-        
-        // Lấy userId từ UserDetails (nếu User implements UserDetails)
-        String userId = null;
-        if (userDetails instanceof com.tanvan.backend.auth.entity.User) {
-            userId = ((com.tanvan.backend.auth.entity.User) userDetails).getId();
-        } else {
-            // Fallback: nếu không lấy được userId, dùng username
-            userId = userDetails.getUsername();
-        }
-        
-        return createToken(claims, userId);
+        return createToken(claims, userId, expiration);
     }
     
-    public String generateRefreshToken(UserDetails userDetails) {
+    public String generateRefreshToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        
-        String userId = null;
-        if (userDetails instanceof com.tanvan.backend.auth.entity.User) {
-            userId = ((com.tanvan.backend.auth.entity.User) userDetails).getId();
-        } else {
-            userId = userDetails.getUsername();
-        }
-        
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userId)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
+        return createToken(claims, userId, refreshExpiration);
     }
     
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String generateToken(String userId, Map<String, Object> extraClaims) {
+        Map<String, Object> claims = new HashMap<>(extraClaims);
+        return createToken(claims, userId, expiration);
+    }
+    
+    private String createToken(Map<String, Object> claims, String subject, Long expirationTime) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String userId = extractUserId(token);
-        
-        // Lấy userId từ UserDetails
-        String expectedUserId = null;
-        if (userDetails instanceof com.tanvan.backend.auth.entity.User) {
-            expectedUserId = ((com.tanvan.backend.auth.entity.User) userDetails).getId();
-        } else {
-            expectedUserId = userDetails.getUsername();
-        }
-        
-        return (userId.equals(expectedUserId) && !isTokenExpired(token));
+    // ============ VALIDATE TOKENS ============
+    
+    public Boolean validateToken(String token, String userId) {
+        final String extractedUserId = extractUserId(token);
+        return (extractedUserId.equals(userId) && !isTokenExpired(token));
     }
-
-    public Boolean validateRefreshToken(String token) {
+    
+    public Boolean validateToken(String token) {
         return !isTokenExpired(token);
     }
 }
