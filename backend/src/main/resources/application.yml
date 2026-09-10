@@ -25,5 +25,27 @@ jwt:                           # ← ĐÚNG: Đặt ngang hàng với spring
   header: Authorization
   prefix: Bearer
 
+# Swagger UI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method          # Sắp xếp theo HTTP method
+    tags-sorter: alpha                 # Sắp xếp tags theo alphabet
+    try-it-out-enabled: true           # Bật nút "Try it out"
+    filter: true                       # Bật ô tìm kiếm
+    display-request-duration: true     # Hiển thị thời gian request
+    default-models-expand-depth: 1     # Độ sâu expand mặc định
+    default-model-expand-depth: 1
+    doc-expansion: none                # Không tự động expand
+    persist-authorization: true        # Lưu token sau khi refresh
+  show-actuator: false                 # Ẩn actuator endpoints
+  packages-to-scan: com.tanvan.backend # Chỉ scan package này
+  paths-to-match: /api/**              # Chỉ hiển thị API endpoints
+
+
 server:
   port: 8080
