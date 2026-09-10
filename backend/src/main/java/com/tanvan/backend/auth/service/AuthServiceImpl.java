@@ -24,28 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String userId = authentication.getName();
-        String token = jwtUtil.generateToken(userId);
-        String refreshToken = jwtUtil.generateRefreshToken(userId);
-
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String userId = user.getId();
+        log.info("User {} logged in successfully", userId);
+
+        String token = jwtUtil.generateToken(userId);
+        String refreshToken = jwtUtil.generateRefreshToken(userId);
 
         return new AuthResponse(token, refreshToken, mapToUserResponse(user));
     }
@@ -113,6 +106,14 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public UserResponse getCurrentUser(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return mapToUserResponse(user);
     }
 
     private UserResponse mapToUserResponse(User user) {

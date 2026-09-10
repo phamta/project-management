@@ -3,12 +3,17 @@ package com.tanvan.backend.auth.controller;
 import com.tanvan.backend.auth.dto.request.LoginRequest;
 import com.tanvan.backend.auth.dto.request.RegisterRequest;
 import com.tanvan.backend.auth.dto.response.AuthResponse;
+import com.tanvan.backend.auth.dto.response.UserResponse;
 import com.tanvan.backend.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Slf4j
 public class AuthController {
     
     private final AuthService authService;
@@ -56,10 +62,10 @@ public class AuthController {
     }
     
     @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserResponse> getCurrentUser() {
         // Implementation to get current user from SecurityContext
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Get current user");
-        return ResponseEntity.ok(response);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+        return ResponseEntity.ok(authService.getCurrentUser(userId));
     }
 }
