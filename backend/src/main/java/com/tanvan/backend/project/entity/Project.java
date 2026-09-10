@@ -36,6 +36,7 @@ public class Project {
     
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
+    @Builder.Default
     private ProjectStatus status = ProjectStatus.PLANNING;
     
     @Column(name = "created_by", nullable = false)
@@ -48,6 +49,7 @@ public class Project {
     private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProjectMember> members = new ArrayList<>();
     
     @PrePersist

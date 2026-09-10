@@ -32,10 +32,12 @@ public class Task {
     
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
+    @Builder.Default
     private TaskStatus status = TaskStatus.TODO;
     
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
+    @Builder.Default
     private TaskPriority priority = TaskPriority.MEDIUM;
     
     @Column(name = "assignee_id")
