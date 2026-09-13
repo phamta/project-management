@@ -16,9 +16,9 @@ import { Separator } from "@/components/ui/separator"
 
 const menuItems = [
   {
-    title: "Dashboard",
+    title: "Workspace",
     icon: LayoutDashboard,
-    path: "/dashboard",
+    path: "/",
   },
   {
     title: "Projects",

@@ -3,6 +3,8 @@ import { useState } from "react"
 import Sidebar from "./Sidebar"
 import Header from "./Header"
 
+import { Outlet } from "react-router-dom"
+
 function MainLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false)
 
@@ -29,7 +31,7 @@ function MainLayout({ children }) {
 
         {/* Content */}
         <main className="p-6">
-          {children}
+          <Outlet />
         </main>
 
       </div>

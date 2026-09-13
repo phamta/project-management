@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import Login from "./components/pages/Login"
 import MainLayout from "./components/layout/MainLayout"
+import Dashboard from "./components/pages/Dashboard"
 
 function App() {
   return (
@@ -9,20 +10,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/"
-          element={
-            <MainLayout>
-              <h1 className="text-3xl font-bold">
-                Dashboard
-              </h1>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Dashboard />} />
+        </Route>
 
-              <p className="mt-2 text-muted-foreground">
-                Welcome to CollabFlow
-              </p>
-            </MainLayout>
-          }
-        />
       </Routes>
     </BrowserRouter>
   )
