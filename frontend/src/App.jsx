@@ -1,21 +1,50 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { AuthProvider, useAuth } from "@/contexts/AuthContext"
+import MainLayout from "@/components/layout/MainLayout"
+import Login from "@/components/pages/Login"
+import Dashboard from "@/components/pages/Dashboard"
 
-import Login from "./components/pages/Login"
-import MainLayout from "./components/layout/MainLayout"
-import Dashboard from "./components/pages/Dashboard"
+// Protected route: chưa login → về /login
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public */}
+          <Route path="/login" element={<Login />} />
 
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Dashboard />} />
-        </Route>
-
-      </Routes>
-    </BrowserRouter>
+          {/* Protected — Layout Route */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

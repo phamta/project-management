@@ -20,21 +20,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 import { GitBranch } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext"
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const { login, error } = useAuth()
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({
-      email,
-      password,
-    });
-
-    navigate("/");
+    try {
+      await login({ username, password });
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Login failed:", err.message);
+    }
   };
 
   return (
@@ -63,16 +65,16 @@ function Login() {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email */}
+              {/* Username */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
 
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="text"
+                  placeholder="admin"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
