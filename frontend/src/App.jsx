@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import MainLayout from "@/components/layout/MainLayout"
 import Login from "@/components/pages/Login"
 import Dashboard from "@/components/pages/Dashboard"
+import WorkspaceDetail from "@/components/pages/WorkspaceDetail"
 
 // Protected route: chưa login → về /login
 function ProtectedRoute({ children }) {
@@ -41,6 +42,7 @@ function App() {
           >
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/workspaces/:id" element={<WorkspaceDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

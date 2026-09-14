@@ -7,7 +7,7 @@ export const mockWorkspaces = [
     color: "indigo",
     emoji: "📣",
     memberCount: 5,
-    taskCount: 12,
+    projectCount: 12,
     members: [
       { id: "u1", name: "Tan Van", initials: "TV", color: "indigo" },
       { id: "u2", name: "Nguyen An", initials: "NA", color: "emerald" },
@@ -25,7 +25,7 @@ export const mockWorkspaces = [
     color: "emerald",
     emoji: "📱",
     memberCount: 8,
-    taskCount: 24,
+    projectCount: 24,
     members: [
       { id: "u1", name: "Tan Van", initials: "TV", color: "indigo" },
       { id: "u6", name: "Hoang Em", initials: "HE", color: "emerald" },
@@ -41,7 +41,7 @@ export const mockWorkspaces = [
     color: "blue",
     emoji: "🎨",
     memberCount: 3,
-    taskCount: 7,
+    projectCount: 7,
     members: [
       { id: "u2", name: "Nguyen An", initials: "NA", color: "emerald" },
       { id: "u8", name: "Do Giang", initials: "DG", color: "rose" },
@@ -57,7 +57,7 @@ export const mockWorkspaces = [
     color: "amber",
     emoji: "🔬",
     memberCount: 4,
-    taskCount: 9,
+    projectCount: 9,
     members: [
       { id: "u3", name: "Tran Binh", initials: "TB", color: "amber" },
       { id: "u10", name: "Ngo Khanh", initials: "NK", color: "indigo" },

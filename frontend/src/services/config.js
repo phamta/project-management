@@ -14,8 +14,14 @@ export const API = {
     BY_ID: (id) => `/users/${id}`,
   },
   WORKSPACES: {
-    BASE: "/workspaces",
+    LIST: "/workspaces",
+    CREATE: "/workspaces",
+    UPDATE: (id) => `/workspaces/${id}`,
+    DELETE: (id) => `/workspaces/${id}`,
     BY_ID: (id) => `/workspaces/${id}`,
+  },
+  PROJECTS: {
+    LIST: (id) => `/workspaces/${id}`,
   },
   TASKS: {
     BASE: "/tasks",
