@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -166,7 +165,6 @@ public class TaskServiceImpl implements TaskService {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
 
-        List<Task> tasks = taskRepository.findByProjectIdAndStatus(projectId, status);
         // Since we need pagination over filtered results, use repository query
         return taskRepository.findByProjectId(projectId, pageable)
                 .map(this::mapToTaskResponse);
