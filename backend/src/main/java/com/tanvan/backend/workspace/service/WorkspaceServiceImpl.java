@@ -16,7 +16,6 @@ import com.tanvan.backend.workspace.entity.WorkspaceMember;
 import com.tanvan.backend.workspace.entity.WorkspaceRole;
 import com.tanvan.backend.workspace.repository.WorkspaceMemberRepository;
 import com.tanvan.backend.workspace.repository.WorkspaceRepository;
-import com.tanvan.backend.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

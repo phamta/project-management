@@ -50,9 +50,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void markAsRead(String notificationId, String userId) {
-        Notification notification = notificationRepository.findByIdAndRecipient_Id(notificationId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification", "id", notificationId));
-
         notificationRepository.markAsRead(notificationId, userId);
         log.info("Notification {} marked as read by user {}", notificationId, userId);
     }

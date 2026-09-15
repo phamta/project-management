@@ -16,7 +16,6 @@ import com.tanvan.backend.comment.repository.CommentRepository;
 import com.tanvan.backend.project.repository.ProjectMemberRepository;
 import com.tanvan.backend.task.entity.Task;
 import com.tanvan.backend.task.repository.TaskRepository;
-import com.tanvan.backend.websocket.controller.WebSocketController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
