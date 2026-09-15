@@ -2,11 +2,13 @@
 package com.tanvan.backend.notification.entity;
 
 public enum NotificationType {
-    COMMENT,
-    ASSIGNMENT,
-    STATUS_CHANGE,
+    COMMENT_ADDED,
+    COMMENT_REPLIED,
     MENTION,
-    MEMBER_ADDED,
-    PROJECT_UPDATE,
-    TASK_CREATED
+    TASK_ASSIGNED,
+    TASK_STATUS_CHANGED,
+    TASK_UPDATED,
+    TASK_DUE_SOON,
+    PROJECT_MEMBER_ADDED,
+    WORKSPACE_MEMBER_ADDED
 }

@@ -2,13 +2,15 @@
 package com.tanvan.backend.notification.service;
 
 import com.tanvan.backend.notification.dto.response.NotificationResponse;
-import com.tanvan.backend.notification.entity.NotificationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.tanvan.backend.notification.entity.Notification;
+import com.tanvan.backend.notification.event.NotificationEvent;
+
 public interface NotificationService {
 
-    NotificationResponse createNotification(String userId, NotificationType type, String title, String message, String referenceId, String senderId);
+    Notification createNotification(NotificationEvent event);
 
     void markAsRead(String notificationId, String userId);
 
