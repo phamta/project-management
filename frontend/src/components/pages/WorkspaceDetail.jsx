@@ -4,6 +4,7 @@ import { ArrowLeft, FolderOpen, Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import ProjectGrid from "@/components/project/ProjectGrid"
+import CreateProjectModal from "@/components/project/CreateProjectModal"
 import workspaceService from "@/services/workspace.service"
 import projectService from "@/services/project.service"
 import { normalizeListResponse, normalizeItemResponse } from "@/lib/api-utils"
@@ -45,7 +46,7 @@ function WorkspaceDetail() {
   const fetchProjects = useCallback(async () => {
     try {
       setLoadingProjects(true)
-      const data = await projectService.getProjectsByWorkspace(workspaceId)
+      const data = await projectService.getProjectInWorkspace(workspaceId)
       setProjects(normalizeListResponse(data))
     } catch (err) {
       console.error("Fetch projects failed:", err)
@@ -174,12 +175,12 @@ function WorkspaceDetail() {
       </section>
 
       {/* Modal tạo project — tạo file riêng tương tự CreateWorkspaceModal */}
-      {/* <CreateProjectModal
+      <CreateProjectModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onSubmit={handleSubmitProject}
         submitting={submitting}
-      /> */}
+      />
     </div>
   )
 }

@@ -46,18 +46,18 @@ function Sidebar({ collapsed = false, onToggle }) {
   return (
     <aside
       className={`fixed left-0 top-0 z-40 flex h-screen flex-col border-r bg-background transition-all duration-300 ${
-        collapsed ? "w-20" : "w-64"
+        collapsed ? "w-16 md:w-20" : "w-16 md:w-64"
       }`}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between px-4">
+      <div className="flex h-16 items-center justify-center px-2 md:justify-between md:px-4">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <span className="font-bold">C</span>
             </div>
 
-            <span className="text-lg font-bold">
+            <span className="hidden text-lg font-bold md:inline">
               CollabFlow
             </span>
           </div>
@@ -84,13 +84,13 @@ function Sidebar({ collapsed = false, onToggle }) {
               className={`w-full ${
                 collapsed
                   ? "justify-center px-2"
-                  : "justify-start"
+                  : "justify-center px-2 md:justify-start"
               }`}
             >
               <Icon className="h-5 w-5 shrink-0" />
 
               {!collapsed && (
-                <span className="ml-3">
+                <span className="ml-3 hidden md:inline">
                   {item.title}
                 </span>
               )}
@@ -106,13 +106,13 @@ function Sidebar({ collapsed = false, onToggle }) {
           className={`w-full ${
             collapsed
               ? "justify-center px-2"
-              : "justify-start"
+              : "justify-center px-2 md:justify-start"
           }`}
         >
           <Settings className="h-5 w-5 shrink-0" />
 
           {!collapsed && (
-            <span className="ml-3">
+            <span className="ml-3 hidden md:inline">
               Settings
             </span>
           )}
@@ -136,7 +136,7 @@ function Sidebar({ collapsed = false, onToggle }) {
             </Avatar>
 
             {!collapsed && (
-              <div className="min-w-0">
+              <div className="hidden min-w-0 md:block">
                 <p className="truncate text-sm font-medium">
                   Tan Van
                 </p>
@@ -152,7 +152,7 @@ function Sidebar({ collapsed = false, onToggle }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="hidden h-8 w-8 md:inline-flex"
             >
               <LogOut className="h-4 w-4" />
             </Button>

@@ -26,6 +26,11 @@ export const workspaceService = {
         const { data } = await axiosInstance.delete(API.WORKSPACES.BY_ID(id))
         return data
     },
+
+    async getWorkspaceMembers(workspaceId) {
+        const { data } = await axiosInstance.get(API.WORKSPACES.MEMBERS(workspaceId));
+        return data;
+    }
 }
 
 export default workspaceService;

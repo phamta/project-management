@@ -23,6 +23,7 @@ function Dashboard() {
       setLoading(true)
       setError(null)
       const data = await workspaceService.getWorkspaces()
+      console.log("Fetched workspaces:", data)
       setWorkspaces(data?.content ?? data ?? [])
     } catch (err) {
       const message =
