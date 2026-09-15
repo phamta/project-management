@@ -73,7 +73,7 @@ public class ProjectController {
         return ResponseEntity.ok(PageResponse.of(page));
     }
 
-    @GetMapping("/{workspaceId}")
+    @GetMapping("/workspace/{workspaceId}")
     public ResponseEntity<PageResponse<ProjectResponse>> getProjectInWorkspace(
         @PathVariable String workspaceId,
         @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {

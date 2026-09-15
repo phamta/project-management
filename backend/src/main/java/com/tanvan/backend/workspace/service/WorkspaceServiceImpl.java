@@ -16,6 +16,7 @@ import com.tanvan.backend.workspace.entity.WorkspaceMember;
 import com.tanvan.backend.workspace.entity.WorkspaceRole;
 import com.tanvan.backend.workspace.repository.WorkspaceMemberRepository;
 import com.tanvan.backend.workspace.repository.WorkspaceRepository;
+import com.tanvan.backend.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -222,6 +223,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .collect(Collectors.toList());
         
         User owner = findUserById(workspace.getOwnerId());
+        int projectCount = workspaceRepository.countProjectsByWorkspaceId(workspace.getId());
         
         return WorkspaceResponse.builder()
                 .id(workspace.getId())
@@ -232,7 +234,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .createdAt(workspace.getCreatedAt())
                 .updatedAt(workspace.getUpdatedAt())
                 .memberCount(memberResponses.size())
-                .projectCount(0) // Will be implemented with Project module
+                .projectCount(projectCount) // Will be implemented with Project module
                 .members(memberResponses)
                 .build();
     }
