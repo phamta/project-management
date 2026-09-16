@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -20,6 +21,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
+import { useState, useEffect } from "react"
+import notificationService from "@/services/notification.service"
+import { normalizeListResponse, normalizeItemResponse } from "@/lib/api-utils";
 
 // Helper: lấy initials từ tên
 function getInitials(name = "") {
@@ -32,9 +36,17 @@ function getInitials(name = "") {
     .toUpperCase()
 }
 
+function formatCount(count) {
+  if (count <= 0) return null
+  if (count > 9) return "9+"
+  return String(count)
+}
+
 function Header() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const displayName = user?.name || user?.username || "Guest"
   const displayRole = user?.role || user?.jobTitle || "Member"
@@ -44,6 +56,22 @@ function Header() {
     await logout()
     navigate("/login", { replace: true })
   }
+
+  useEffect(() => {
+    const fetchUnreadNotifications = async () => {
+      try {
+        const data = await notificationService.getUnreadNotifications();
+        const count = normalizeItemResponse(data)?.count || 0;
+        setUnreadCount(count);
+      } catch (err) {
+        console.error("Failed to fetch unread notifications:", err);
+      }
+    };
+
+    fetchUnreadNotifications();
+  }, []);
+
+  const badgeText = formatCount(unreadCount)
 
   return (
     <header className="sticky top-0 z-30 flex min-h-16 flex-wrap items-center justify-between gap-2 border-b bg-background/95 px-3 py-2 backdrop-blur sm:px-6 sm:py-0">
@@ -61,9 +89,23 @@ function Header() {
         </Button>
 
         {/* Notification */}
-        <Button variant="ghost" size="icon" className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          aria-label={
+            badgeText
+              ? `Notifications (${unreadCount} unread)`
+              : "Notifications"
+          }
+        >
           <Bell className="h-5 w-5" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-destructive" />
+
+          {badgeText && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium leading-none text-destructive-foreground">
+              {badgeText}
+            </span>
+          )}
         </Button>
 
         {/* User */}
@@ -71,38 +113,25 @@ function Header() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="ml-1 flex items-center gap-2 px-1 sm:ml-2 sm:px-2"
+              className="ml-2 flex items-center gap-2 px-2"
             >
-              <Avatar className="h-8 w-8">
-                {user?.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={displayName}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <AvatarFallback>{initials}</AvatarFallback>
-                )}
+              <Avatar className="h-9 w-9">
+                <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
 
               <div className="hidden text-left md:block">
-                <p className="text-sm font-medium">{displayName}</p>
-                <p className="text-xs text-muted-foreground">{displayRole}</p>
+                <p className="text-sm font-medium">
+                  {displayName}
+                </p>
+
+                <p className="text-xs text-muted-foreground">
+                  {displayRole}
+                </p>
               </div>
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="flex flex-col">
-                <span>{displayName}</span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {user?.email || ""}
-                </span>
-              </div>
-            </DropdownMenuLabel>
-
-            <DropdownMenuSeparator />
 
             <DropdownMenuItem onClick={() => navigate("/profile")}>
               <User className="mr-2 h-4 w-4" />

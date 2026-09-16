@@ -34,4 +34,8 @@ export const API = {
     BY_ID: (id) => `/tasks/${id}`,
     COMMENTS: (taskId) => `/tasks/${taskId}/comments`,
   },
+  NOTIFICATIONS: {
+    LIST: "/notifications",
+    UNREAD: "/notifications/unread/count",
+  },
 }
