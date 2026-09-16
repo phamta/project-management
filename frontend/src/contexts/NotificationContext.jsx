@@ -17,14 +17,14 @@ const NotificationContext = createContext(null);
 
 export const useNotification = () => {
   const ctx = useContext(NotificationContext);
-  if (!ctx) throw new Error("useNotification must be inside NotificationProvider");
+  if (!ctx)
+    throw new Error("useNotification must be inside NotificationProvider");
   return ctx;
 };
 
 export function NotificationProvider({ children }) {
-  // ⚠️ Đổi theo AuthContext của bạn: token có thể là user?.token hoặc localStorage
-  const { user } = useAuth();
-  const token = user?.token || localStorage.getItem("accessToken");
+  const { user, accessToken } = useAuth();
+  const token = accessToken;
 
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -81,7 +81,9 @@ export function NotificationProvider({ children }) {
             <div className="flex items-start gap-3">
               <Icon className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">{noti.title}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {noti.title}
+                </p>
                 <p className="mt-1 text-sm text-gray-500 line-clamp-2">
                   {noti.message}
                 </p>
@@ -90,7 +92,7 @@ export function NotificationProvider({ children }) {
           </div>
         </div>
       ),
-      { duration: 5000 }
+      { duration: 5000 },
     );
   }, []);
 
@@ -109,7 +111,10 @@ export function NotificationProvider({ children }) {
     if (loading) return;
     setLoading(true);
     try {
-      const res = await notificationService.getMyNotifications?.(pageNum, PAGE_SIZE);
+      const res = await notificationService.getMyNotifications?.(
+        pageNum,
+        PAGE_SIZE,
+      );
       const items = res?.data?.content ?? res?.content ?? [];
       setNotifications((prev) => (reset ? items : [...prev, ...items]));
       setPage(pageNum);
@@ -129,7 +134,7 @@ export function NotificationProvider({ children }) {
     try {
       await notificationService.markAsRead?.(id);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
