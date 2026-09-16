@@ -37,5 +37,7 @@ export const API = {
   NOTIFICATIONS: {
     LIST: "/notifications",
     UNREAD: "/notifications/unread/count",
+    MARK_AS_READ: (id) => `/notifications/${id}/read`,
+    MARK_ALL_AS_READ: "/notifications/read-all",
   },
 }
