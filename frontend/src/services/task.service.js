@@ -9,6 +9,11 @@ export const taskService = {
     return data;
   },
 
+  async getTaskById(id) {
+    const { data } = await axiosInstance.get(API.TASKS.BY_ID(id));
+    return data;
+  },
+
   async createTask(projectId, payload) {
     const { data } = await axiosInstance.post(API.TASKS.CREATE, {
       ...payload,

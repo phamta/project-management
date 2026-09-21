@@ -24,6 +24,8 @@ export const API = {
   PROJECTS: {
     LIST: (id) => `/projects/workspace/${id}`,
     MEMBERS: (projectId) => `/projects/${projectId}/members`,
+    CREATE: (workspaceId) => `/projects/workspace/${workspaceId}`,
+    BY_ID: (id) => `/projects/${id}`,
   },
   TASKS: {
     BY_PROJECT: (projectId) => `/tasks/project/${projectId}`,
@@ -40,4 +42,8 @@ export const API = {
     MARK_AS_READ: (id) => `/notifications/${id}/read`,
     MARK_ALL_AS_READ: "/notifications/read-all",
   },
+  COMMENTS: {
+    CREATE: "/comments",
+    BY_TASK: (taskId) => `/comments/task/${taskId}`,
+  }
 }

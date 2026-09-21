@@ -1,6 +1,6 @@
 import {
   Search,
-  Bell,
+  // Bell,
   HelpCircle,
   Settings,
   LogOut,
@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useState, useEffect } from "react"
 import notificationService from "@/services/notification.service"
 import { normalizeListResponse, normalizeItemResponse } from "@/lib/api-utils";
+import NotificationBell from "@/components/notification/NotificationBell";
 
 // Helper: lấy initials từ tên
 function getInitials(name = "") {
@@ -46,7 +47,7 @@ function Header() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
-  const [unreadCount, setUnreadCount] = useState(0)
+  // const [unreadCount, setUnreadCount] = useState(0)
 
   const displayName = user?.name || user?.username || "Guest"
   const displayRole = user?.role || user?.jobTitle || "Member"
@@ -57,21 +58,21 @@ function Header() {
     navigate("/login", { replace: true })
   }
 
-  useEffect(() => {
-    const fetchUnreadNotifications = async () => {
-      try {
-        const data = await notificationService.getUnreadNotifications();
-        const count = normalizeItemResponse(data)?.count || 0;
-        setUnreadCount(count);
-      } catch (err) {
-        console.error("Failed to fetch unread notifications:", err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUnreadNotifications = async () => {
+  //     try {
+  //       const data = await notificationService.getUnreadNotifications();
+  //       const count = normalizeItemResponse(data)?.count || 0;
+  //       setUnreadCount(count);
+  //     } catch (err) {
+  //       console.error("Failed to fetch unread notifications:", err);
+  //     }
+  //   };
 
-    fetchUnreadNotifications();
-  }, []);
+  //   fetchUnreadNotifications();
+  // }, []);
 
-  const badgeText = formatCount(unreadCount)
+  // const badgeText = formatCount(unreadCount)
 
   return (
     <header className="sticky top-0 z-30 flex min-h-16 flex-wrap items-center justify-between gap-2 border-b bg-background/95 px-3 py-2 backdrop-blur sm:px-6 sm:py-0">
@@ -89,24 +90,25 @@ function Header() {
         </Button>
 
         {/* Notification */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          aria-label={
-            badgeText
-              ? `Notifications (${unreadCount} unread)`
-              : "Notifications"
-          }
-        >
-          <Bell className="h-5 w-5" />
+          {/* <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+            aria-label={
+              badgeText
+                ? `Notifications (${unreadCount} unread)`
+                : "Notifications"
+            }
+          >
+            <Bell className="h-5 w-5" />
 
-          {badgeText && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium leading-none text-destructive-foreground">
-              {badgeText}
-            </span>
-          )}
-        </Button>
+            {badgeText && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium leading-none text-destructive-foreground">
+                {badgeText}
+              </span>
+            )}
+          </Button> */}
+        <NotificationBell />
 
         {/* User */}
         <DropdownMenu>

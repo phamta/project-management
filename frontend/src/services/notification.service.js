@@ -8,17 +8,17 @@ export const notificationService = {
     },
 
     async getMyNotifications()  {
-        const res = await axios.get(API.NOTIFICATIONS.LIST);
+        const res = await axiosInstance.get(API.NOTIFICATIONS.LIST);
         return res.data; // ApiResponse<PageResponse<NotificationResponse>>
     },
 
     async markAsRead(id){
-        const res = await axios.patch(API.NOTIFICATIONS.MARK_AS_READ(id));
+        const res = await axiosInstance.patch(API.NOTIFICATIONS.MARK_AS_READ(id));
         return res.data;
     },
 
     async markAllAsRead() {
-        const res = await axios.patch(API.NOTIFICATIONS.MARK_ALL_AS_READ);
+        const res = await axiosInstance.patch(API.NOTIFICATIONS.MARK_ALL_AS_READ);
         return res.data;
     },
 }

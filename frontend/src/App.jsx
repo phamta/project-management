@@ -5,6 +5,7 @@ import Login from "@/components/pages/Login"
 import Dashboard from "@/components/pages/Dashboard"
 import WorkspaceDetail from "@/components/pages/WorkspaceDetail"
 import ProjectDetail from "@/components/pages/ProjectDetail"
+import TaskDetail from "@/components/pages/TaskDetail"
 import { NotificationProvider } from "./contexts/NotificationContext"
 
 // Protected route: chưa login → về /login
@@ -47,6 +48,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/workspaces/:id" element={<WorkspaceDetail />} />
               <Route path="/projects/:id" element={<ProjectDetail />} />
+              <Route path="/tasks/:id" element={<TaskDetail />} />
             </Route>
           </Routes>
         </BrowserRouter>
