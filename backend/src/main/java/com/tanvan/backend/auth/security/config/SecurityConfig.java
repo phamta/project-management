@@ -75,7 +75,8 @@ public class SecurityConfig {
                 "http://localhost:3000",   // React
                 "http://localhost:3001",   // React alt
                 "http://localhost:4200",   // Angular
-                "http://127.0.0.1:5173"
+                "http://127.0.0.1:5173",
+                "https://project-management-frontend-sp2q.onrender.com" // Render
         ));
         
         configuration.setAllowedMethods(Arrays.asList(
