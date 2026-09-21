@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,6 +28,12 @@ import java.util.Map;
 public class AuthController {
     
     private final AuthService authService;
+
+    @GetMapping("/heath")
+    public String getMethodName() {
+        return new String("AuthController is working");
+    }
+    
     
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
