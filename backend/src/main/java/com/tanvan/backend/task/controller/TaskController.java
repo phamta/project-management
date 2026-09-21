@@ -8,7 +8,6 @@ import com.tanvan.backend.task.dto.request.UpdateTaskRequest;
 import com.tanvan.backend.task.dto.request.UpdateTaskStatusRequest;
 import com.tanvan.backend.task.dto.response.TaskDetailResponse;
 import com.tanvan.backend.task.dto.response.TaskResponse;
-import com.tanvan.backend.task.entity.TaskStatus;
 import com.tanvan.backend.task.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

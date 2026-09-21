@@ -6,6 +6,8 @@ import com.tanvan.backend.auth.repository.UserRepository;
 import com.tanvan.backend.common.exception.BusinessException;
 import com.tanvan.backend.common.exception.ErrorCode;
 import com.tanvan.backend.common.exception.ResourceNotFoundException;
+import com.tanvan.backend.notification.event.NotificationPublisher;
+import com.tanvan.backend.notification.entity.NotificationType;
 import com.tanvan.backend.project.entity.Project;
 import com.tanvan.backend.project.repository.ProjectMemberRepository;
 import com.tanvan.backend.project.repository.ProjectRepository;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectRepository projectRepository;
     private final ProjectMemberRepository projectMemberRepository;
     private final UserRepository userRepository;
+    private final NotificationPublisher notificationPublisher;
 
     @Override
     public TaskDetailResponse createTask(String userId, CreateTaskRequest request) {
@@ -55,6 +57,13 @@ public class TaskServiceImpl implements TaskService {
                 .dueDate(request.getDueDate())
                 .build();
 
+        notificationPublisher.publish(request.getAssigneeId(), 
+                                    userId, 
+                                    NotificationType.TASK_ASSIGNED, 
+                                    "New Task Assigned",
+                                    "You have been assigned a new task: " + request.getTitle(),
+                                    "TASK",
+                                    task.getId());
         task = taskRepository.save(task);
         log.info("Task created: {} by user {}", task.getTitle(), userId);
         return mapToTaskDetailResponse(task);
@@ -166,7 +175,6 @@ public class TaskServiceImpl implements TaskService {
             throw new BusinessException(ErrorCode.PERMISSION_DENIED);
         }
 
-        List<Task> tasks = taskRepository.findByProjectIdAndStatus(projectId, status);
         // Since we need pagination over filtered results, use repository query
         return taskRepository.findByProjectId(projectId, pageable)
                 .map(this::mapToTaskResponse);

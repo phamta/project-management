@@ -222,6 +222,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .collect(Collectors.toList());
         
         User owner = findUserById(workspace.getOwnerId());
+        int projectCount = workspaceRepository.countProjectsByWorkspaceId(workspace.getId());
         
         return WorkspaceResponse.builder()
                 .id(workspace.getId())
@@ -232,7 +233,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .createdAt(workspace.getCreatedAt())
                 .updatedAt(workspace.getUpdatedAt())
                 .memberCount(memberResponses.size())
-                .projectCount(0) // Will be implemented with Project module
+                .projectCount(projectCount) // Will be implemented with Project module
                 .members(memberResponses)
                 .build();
     }

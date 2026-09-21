@@ -6,6 +6,8 @@ import com.tanvan.backend.auth.repository.UserRepository;
 import com.tanvan.backend.common.exception.BusinessException;
 import com.tanvan.backend.common.exception.ErrorCode;
 import com.tanvan.backend.common.exception.ResourceNotFoundException;
+import com.tanvan.backend.notification.entity.NotificationType;
+import com.tanvan.backend.notification.event.NotificationPublisher;
 import com.tanvan.backend.comment.dto.request.CreateCommentRequest;
 import com.tanvan.backend.comment.dto.request.UpdateCommentRequest;
 import com.tanvan.backend.comment.dto.response.CommentResponse;
@@ -14,7 +16,6 @@ import com.tanvan.backend.comment.repository.CommentRepository;
 import com.tanvan.backend.project.repository.ProjectMemberRepository;
 import com.tanvan.backend.task.entity.Task;
 import com.tanvan.backend.task.repository.TaskRepository;
-import com.tanvan.backend.websocket.controller.WebSocketController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,9 +33,10 @@ public class CommentServiceImpl implements CommentService {
     private final TaskRepository taskRepository;
     private final ProjectMemberRepository projectMemberRepository;
     private final UserRepository userRepository;
-    private final WebSocketController webSocketController;
+    private final NotificationPublisher notificationPublisher;
 
     @Override
+    @Transactional 
     public CommentResponse createComment(String userId, CreateCommentRequest request) {
         Task task = findTaskById(request.getTaskId());
 
@@ -51,6 +53,18 @@ public class CommentServiceImpl implements CommentService {
 
         comment = commentRepository.save(comment);
         log.info("Comment created on task {} by user {}", request.getTaskId(), userId);
+        User actor = comment.getUserId() != null ? findUserById(comment.getUserId()) : null;
+        // 1. Notify assignee
+        if (task.getAssigneeId() != null) {
+            notificationPublisher.publish(
+                    task.getAssigneeId(),
+                    actor.getId(),
+                    NotificationType.COMMENT_ADDED,
+                    "Bình luận mới",
+                    actor.getFullName() + " đã bình luận vào task: " + task.getTitle(),
+                    "TASK", task.getId()
+            );
+        }
         return mapToCommentResponse(comment);
     }
 

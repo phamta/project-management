@@ -1,17 +1,21 @@
 // notification/entity/Notification.java
 package com.tanvan.backend.notification.entity;
 
+import com.tanvan.backend.auth.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
-@Data
+@Getter
+@Setter 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,8 +25,13 @@ public class Notification {
     @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private User recipient;          // người nhận
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "actor_id")
+    private User actor;              // người gây ra sự kiện
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 30)
@@ -34,11 +43,11 @@ public class Notification {
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    @Column(name = "reference_type")
+    private String referenceType;    // "TASK", "COMMENT", "PROJECT"
+
     @Column(name = "reference_id")
     private String referenceId;
-
-    @Column(name = "sender_id")
-    private String senderId;
 
     @Column(name = "is_read")
     @Builder.Default

@@ -13,6 +13,7 @@ import com.tanvan.backend.workspace.service.WorkspaceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -68,8 +69,28 @@ public class WorkspaceController {
     public ResponseEntity<PageResponse<WorkspaceResponse>> getUserWorkspaces(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         String userId = getCurrentUserId();
-        Page<WorkspaceResponse> page = workspaceService.getUserWorkspaces(userId, pageable);
+        Pageable sanitizedPageable = sanitizePageable(pageable);
+        Page<WorkspaceResponse> page = workspaceService.getUserWorkspaces(userId, sanitizedPageable);
         return ResponseEntity.ok(PageResponse.of(page));
+    }
+
+    private Pageable sanitizePageable(Pageable pageable) {
+        List<String> allowedSortFields = List.of("createdAt", "updatedAt", "name");
+        
+        List<Sort.Order> validOrders = pageable.getSort().stream()
+                .filter(order -> allowedSortFields.contains(order.getProperty()))
+                .toList();
+        
+        if (validOrders.isEmpty()) {
+            // Mặc định sort theo createdAt DESC
+            validOrders = List.of(new Sort.Order(Sort.Direction.DESC, "createdAt"));
+        }
+        
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(validOrders)
+        );
     }
     
     @PostMapping("/{workspaceId}/members")

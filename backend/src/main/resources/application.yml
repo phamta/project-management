@@ -45,6 +45,7 @@ springdoc:
   show-actuator: false                 # Ẩn actuator endpoints
   packages-to-scan: com.tanvan.backend # Chỉ scan package này
   paths-to-match: /api/**              # Chỉ hiển thị API endpoints
+  override-with-generic-response: false
 
 
 server:

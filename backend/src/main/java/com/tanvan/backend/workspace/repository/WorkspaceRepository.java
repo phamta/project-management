@@ -26,4 +26,8 @@ public interface WorkspaceRepository extends JpaRepository<Workspace, String> {
     boolean isOwner(@Param("workspaceId") String workspaceId, @Param("userId") String userId);
     
     Optional<Workspace> findByIdAndOwnerId(String id, String ownerId);
+
+    @Query(value = "SELECT COUNT(*) FROM projects WHERE workspace_id = :workspaceId", 
+           nativeQuery = true)
+    int countProjectsByWorkspaceId(@Param("workspaceId") String workspaceId);
 }

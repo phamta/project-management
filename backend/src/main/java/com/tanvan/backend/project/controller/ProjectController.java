@@ -13,6 +13,7 @@ import com.tanvan.backend.project.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -70,6 +71,35 @@ public class ProjectController {
         String userId = getCurrentUserId();
         Page<ProjectResponse> page = projectService.getUserProjects(userId, pageable);
         return ResponseEntity.ok(PageResponse.of(page));
+    }
+
+    @GetMapping("/workspace/{workspaceId}")
+    public ResponseEntity<PageResponse<ProjectResponse>> getProjectInWorkspace(
+        @PathVariable String workspaceId,
+        @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        String userId = getCurrentUserId();
+        Pageable sanitizedPageable = sanitizePageable(pageable);
+        Page<ProjectResponse> page = projectService.getWorkspaceProjects(workspaceId, userId, sanitizedPageable);
+        return ResponseEntity.ok(PageResponse.of(page));
+    }
+    
+    private Pageable sanitizePageable(Pageable pageable) {
+        List<String> allowedSortFields = List.of("createdAt", "updatedAt", "name");
+        
+        List<Sort.Order> validOrders = pageable.getSort().stream()
+                .filter(order -> allowedSortFields.contains(order.getProperty()))
+                .toList();
+        
+        if (validOrders.isEmpty()) {
+            // Mặc định sort theo createdAt DESC
+            validOrders = List.of(new Sort.Order(Sort.Direction.DESC, "createdAt"));
+        }
+        
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(validOrders)
+        );
     }
 
     @PostMapping("/{projectId}/members")
