@@ -21,14 +21,14 @@ import { Separator } from "@/components/ui/separator"
 import { GitBranch } from "lucide-react"
 
 function Login() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     console.log({
-      email,
+      username,
       password,
     })
   }
@@ -77,20 +77,20 @@ function Login() {
               className="space-y-5"
             >
 
-              {/* Email */}
+              {/* Username */}
               <div className="space-y-2">
 
-                <Label htmlFor="email">
-                  Email
+                <Label htmlFor="text">
+                  Username
                 </Label>
 
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
                   onChange={(e) =>
-                    setEmail(e.target.value)
+                    setUsername(e.target.value)
                   }
                   required
                 />
