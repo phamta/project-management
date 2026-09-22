@@ -142,7 +142,7 @@ function Login() {
                 Don't have an account?{" "}
               </span>
 
-              <Button variant="link" className="h-auto p-0">
+              <Button variant="link" className="h-auto p-0" onClick={() => navigate("/register")}>
                 Sign up
               </Button>
             </div>

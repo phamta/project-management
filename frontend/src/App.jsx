@@ -2,11 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import MainLayout from "@/components/layout/MainLayout"
 import Login from "@/components/pages/Login"
+import Register from "@/components/pages/Register"
 import Dashboard from "@/components/pages/Dashboard"
 import WorkspaceDetail from "@/components/pages/WorkspaceDetail"
 import ProjectDetail from "@/components/pages/ProjectDetail"
 import TaskDetail from "@/components/pages/TaskDetail"
 import { NotificationProvider } from "./contexts/NotificationContext"
+import {Toaster} from "react-hot-toast"
 
 // Protected route: chưa login → về /login
 function ProtectedRoute({ children }) {
@@ -35,12 +37,14 @@ function App() {
           <Routes>
             {/* Public */}
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
             {/* Protected — Layout Route */}
             <Route
               element={
                 <ProtectedRoute>
                   <MainLayout />
+                  <Toaster position="top-right" reverseOrder={false} />
                 </ProtectedRoute>
               }
             >
