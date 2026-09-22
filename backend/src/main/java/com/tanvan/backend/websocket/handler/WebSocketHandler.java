@@ -11,8 +11,10 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -25,24 +27,33 @@ public class WebSocketHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (accessor == null) return message;
+
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authHeader = accessor.getFirstNativeHeader("Authorization");
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
 
                 try {
-                    String userId = jwtUtil.extractUserId(token);
+                    // Validate trước
+                    if (jwtUtil.validateToken(token)) {
+                        String userId = jwtUtil.extractUserId(token);
 
-                    if (userId != null && jwtUtil.validateToken(token)) {
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(userId, null, null);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        accessor.setUser(authentication);
-                        log.info("WebSocket user connected: {}", userId);
+                        if (userId != null) {
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(
+                                            userId,
+                                            null,
+                                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                                    );
+                            accessor.setUser(authentication);
+                            log.info("WebSocket user connected: {}", userId);
+                        }
                     }
                 } catch (Exception e) {
                     log.error("WebSocket auth failed: {}", e.getMessage());
+                    throw new IllegalArgumentException("WebSocket authentication failed");
                 }
             }
         }
