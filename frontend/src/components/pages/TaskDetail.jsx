@@ -140,7 +140,8 @@ function TaskDetail() {
   const handleCreateComment = async (content, parentId = null) => {
     try {
       setSubmittingComment(true)
-      const data = await commentService.createComment(taskId, {
+      const data = await commentService.createComment({
+        taskId,
         content,
         parentId,
       })
