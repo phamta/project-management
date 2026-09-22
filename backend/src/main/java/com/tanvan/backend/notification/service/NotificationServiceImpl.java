@@ -7,7 +7,6 @@ import com.tanvan.backend.notification.dto.response.NotificationResponse;
 import com.tanvan.backend.notification.entity.Notification;
 import com.tanvan.backend.notification.event.NotificationEvent;
 import com.tanvan.backend.notification.repository.NotificationRepository;
-import com.tanvan.backend.websocket.controller.WebSocketController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final WebSocketController webSocketController;
     private final UserRepository userRepository;
 
     @Override
@@ -40,11 +38,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         notification = notificationRepository.save(notification);
 
-        // Send real-time notification via WebSocket
-        NotificationResponse response = mapToNotificationResponse(notification);
-        webSocketController.sendNotification(e.getRecipientId(), response);
-
-        log.info("Notification created for user {}: {}", e.getRecipientId(), e.getTitle());
         return notification;
     }
 
