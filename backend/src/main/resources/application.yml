@@ -18,14 +18,34 @@ spring:
   flyway:
     enabled: true
 
-jwt:                           # ← ĐÚNG: Đặt ngang hàng với spring
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 45efe92a6bb64c
+    password: 69d7f20fe78fea
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  mail:
+    from: ${MAIL_FROM:no-reply@collabflow.app}
+    from-name: ${MAIL_FROM_NAME:CollabFlow}
+    enabled: ${MAIL_ENABLED:true}
+
+  profiles:
+    active: dev
+
+jwt:
   secret: your-very-secret-key-here-at-least-32-characters
-  expiration: 900000 # 15 minutes in milliseconds
-  refresh-expiration: 28800000 # 8 hours in milliseconds
+  expiration: 900000
+  refresh-expiration: 28800000
   header: Authorization
   prefix: Bearer
 
-# Swagger UI Configuration
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -33,20 +53,19 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
-    operations-sorter: method          # Sắp xếp theo HTTP method
-    tags-sorter: alpha                 # Sắp xếp tags theo alphabet
-    try-it-out-enabled: true           # Bật nút "Try it out"
-    filter: true                       # Bật ô tìm kiếm
-    display-request-duration: true     # Hiển thị thời gian request
-    default-models-expand-depth: 1     # Độ sâu expand mặc định
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    filter: true
+    display-request-duration: true
+    default-models-expand-depth: 1
     default-model-expand-depth: 1
-    doc-expansion: none                # Không tự động expand
-    persist-authorization: true        # Lưu token sau khi refresh
-  show-actuator: false                 # Ẩn actuator endpoints
-  packages-to-scan: com.tanvan.backend # Chỉ scan package này
-  paths-to-match: /api/**              # Chỉ hiển thị API endpoints
+    doc-expansion: none
+    persist-authorization: true
+  show-actuator: false
+  packages-to-scan: com.tanvan.backend
+  paths-to-match: /api/**
   override-with-generic-response: false
-
 
 server:
   port: 8080

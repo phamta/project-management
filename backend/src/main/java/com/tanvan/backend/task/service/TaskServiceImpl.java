@@ -56,6 +56,8 @@ public class TaskServiceImpl implements TaskService {
                 .creatorId(userId)
                 .dueDate(request.getDueDate())
                 .build();
+                
+        task = taskRepository.save(task);
 
         notificationPublisher.publish(request.getAssigneeId(), 
                                     userId, 
@@ -64,7 +66,6 @@ public class TaskServiceImpl implements TaskService {
                                     "You have been assigned a new task: " + request.getTitle(),
                                     "TASK",
                                     task.getId());
-        task = taskRepository.save(task);
         log.info("Task created: {} by user {}", task.getTitle(), userId);
         return mapToTaskDetailResponse(task);
     }
