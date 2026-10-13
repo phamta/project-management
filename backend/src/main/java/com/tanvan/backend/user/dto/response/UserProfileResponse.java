@@ -23,6 +23,7 @@ public class UserProfileResponse {
     private String email;
     private String fullName;
     private String phone;
+    private String avatar;
     private Role role;
     private boolean enabled;
     private LocalDateTime createdAt;

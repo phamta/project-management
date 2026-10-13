@@ -247,6 +247,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .username(user.getUsername())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .avatar(user.getAvatar())
                 .role(member.getRole())
                 .joinedAt(member.getJoinedAt())
                 .build();

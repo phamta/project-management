@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom"
 
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +51,9 @@ function Header() {
 
   const displayName = user?.name || user?.username || "Guest"
   const displayRole = user?.role || user?.jobTitle || "Member"
-  const initials = getInitials(displayName) || "U"
+  const initials = user?.avatar ? user.avatar : getInitials(displayName)
+
+
 
   const handleLogout = async () => {
     await logout()
@@ -118,7 +120,11 @@ function Header() {
               className="ml-2 flex items-center gap-2 px-2"
             >
               <Avatar className="h-9 w-9">
-                <AvatarFallback>{initials}</AvatarFallback>
+                {user?.avatar ? (
+                  <AvatarImage src={`${import.meta.env.VITE_BASE_URL}${user.avatar}`} alt={displayName} />
+                ) : (
+                  <AvatarFallback>{initials}</AvatarFallback>
+                )}
               </Avatar>
 
               <div className="hidden text-left md:block">

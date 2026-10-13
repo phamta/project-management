@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/users")
@@ -33,6 +34,15 @@ public class UserController {
         String userId = authentication.getName();
         // Get user by userId
         return ResponseEntity.ok(ApiResponse.success(userService.getUserProfile(userId)));
+    }
+
+    @PutMapping(value = "/profile/avatar", consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> uploadAvatar(
+            @RequestParam("file") MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+        UserProfileResponse response = userService.uploadAvatar(userId, file);
+        return ResponseEntity.ok(ApiResponse.success("Avatar uploaded successfully", response));
     }
     
     @GetMapping("/{userId}")

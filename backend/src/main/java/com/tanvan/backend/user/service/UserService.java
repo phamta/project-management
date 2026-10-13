@@ -9,9 +9,12 @@ import com.tanvan.backend.user.dto.response.UserProfileResponse;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     UserProfileResponse getUserProfile(String userId);
+
+    UserProfileResponse uploadAvatar(String userId, MultipartFile file);
     
     UserProfileResponse updateProfile(String userId, UpdateProfileRequest request);
     

@@ -67,5 +67,15 @@ springdoc:
   paths-to-match: /api/**
   override-with-generic-response: false
 
+aws:
+  endpoint-url: http://localhost:4566
+  access-key-id: test
+  secret-access-key: test
+  region: us-east-1
+
+  s3:
+    bucket: collabflow-bucket
+    path-style-access: true
+
 server:
   port: 8080
