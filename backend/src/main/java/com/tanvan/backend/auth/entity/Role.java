@@ -5,5 +5,6 @@ public enum Role {
     ADMIN, 
     PROJECT_MANAGER, 
     TEAM_LEAD, 
-    MEMBER
+    MEMBER,
+    USER; // ← FIX: thêm role USER để tránh lỗi khi Cognito không có nhóm nào
 }

@@ -3,9 +3,9 @@ spring:
     name: backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/collabflow
-    username: postgres
-    password: 12345678
+    url: jdbc:postgresql://localhost:7001/postgres
+    username: admin
+    password: secret123
 
   jpa:
     hibernate:
@@ -30,6 +30,21 @@ spring:
           starttls:
             enable: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Must match the "iss" claim in a Cognito access token.
+          issuer-uri: http://localhost:4566/us-east-1_a979ddded
+          jwk-set-uri: http://localhost:4566/us-east-1_a979ddded/.well-known/jwks.json
+
+cognito:
+  region: us-east-1
+  user-pool-id: us-east-1_a979ddded
+  client-id: 3250fb47e3d74c8dbc494c7bab
+  issuer-uri: http://localhost:4566/us-east-1_a979ddded
+  jwk-set-uri: http://localhost:4566/us-east-1_a979ddded/.well-known/jwks.json
+
 app:
   mail:
     from: ${MAIL_FROM:no-reply@collabflow.app}
@@ -38,13 +53,6 @@ app:
 
   profiles:
     active: dev
-
-jwt:
-  secret: your-very-secret-key-here-at-least-32-characters
-  expiration: 900000
-  refresh-expiration: 28800000
-  header: Authorization
-  prefix: Bearer
 
 springdoc:
   api-docs:

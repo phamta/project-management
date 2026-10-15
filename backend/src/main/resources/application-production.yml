@@ -20,9 +20,9 @@
 # app:
 #   frontend-url: ${FRONTEND_URL}
 
-# jwt:
-#   secret: ${JWT_SECRET}
-#   expiration: ${JWT_EXPIRATION:86400000}
-#   refresh-expiration: ${JWT_REFRESH_EXPIRATION:28800000}
-#   header: Authorization
-#   prefix: Bearer
+# spring:
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${COGNITO_ISSUER_URI}

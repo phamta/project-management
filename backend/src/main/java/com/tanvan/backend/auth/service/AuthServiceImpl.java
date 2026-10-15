@@ -1,124 +1,63 @@
 package com.tanvan.backend.auth.service;
 
-import com.tanvan.backend.auth.dto.request.LoginRequest;
-import com.tanvan.backend.auth.dto.request.RegisterRequest;
-import com.tanvan.backend.auth.dto.response.AuthResponse;
 import com.tanvan.backend.auth.dto.response.UserResponse;
 import com.tanvan.backend.auth.entity.User;
 import com.tanvan.backend.auth.entity.Role;
 import com.tanvan.backend.auth.repository.UserRepository;
-import com.tanvan.backend.auth.security.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     @Override
-    @Transactional
-    public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserResponse getCurrentUser(Jwt jwt) {
+        String sub      = jwt.getSubject();                               // "sub"
+        String username = jwt.getClaimAsString("cognito:username");       // "alice"
+        String email    = jwt.getClaimAsString("email");                  // "alice@example.com"
+        String fullName = jwt.getClaimAsString("custom:fullName");        // "Alice Nguyen"
+        // KHÔNG có role trong JWT → mặc định hoặc dùng "cognito:groups"
+        String role     = extractRole(jwt);
 
-        String userId = user.getId();
-        log.info("User {} logged in successfully", userId);
+        User user = userRepository.findById(sub)
+                .map(existing -> {
+                    existing.setUsername(username);
+                    existing.setEmail(email);
+                    existing.setFullName(fullName);
+                    return existing;
+                })
+                .orElseGet(() -> User.builder()
+                        .id(sub)
+                        .username(username)
+                        .email(email)
+                        .fullName(fullName)
+                        .password("COGNITO_MANAGED")   // ← FIX: placeholder
+                        .role(Role.valueOf(role))       // ← FIX: role không được null
+                        .enabled(true)
+                        .build());
 
-        String token = jwtUtil.generateToken(userId);
-        String refreshToken = jwtUtil.generateRefreshToken(userId);
+        userRepository.save(user);
 
-        return new AuthResponse(token, refreshToken, mapToUserResponse(user));
-    }
-
-    @Override
-    @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        // Validate username and email
-        if (userRepository.existsByUsername(request.username())) {
-            throw new RuntimeException("Username already exists");
-        }
-
-        if (userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        // Create user
-        User user = User.builder()
-                .username(request.username())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .fullName(request.fullName())
-                .role(Role.MEMBER) // Default role
-                .enabled(true)
-                .build();
-
-        user = userRepository.save(user);
-        String userId = user.getId();
-
-        // Generate tokens
-        String token = jwtUtil.generateToken(userId);
-        String refreshToken = jwtUtil.generateRefreshToken(userId);
-
-        return new AuthResponse(token, refreshToken, mapToUserResponse(user));
-    }
-
-    @Override
-    public AuthResponse refreshToken(String refreshToken) {
-        if (!jwtUtil.validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid refresh token");
-        }
-
-        String userId = jwtUtil.extractUserId(refreshToken);
-
-        String newToken = jwtUtil.generateToken(userId);
-        String newRefreshToken = jwtUtil.generateRefreshToken(userId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return new AuthResponse(newToken, newRefreshToken, mapToUserResponse(user));
-    }
-
-    @Override
-    public void logout(String token) {
-        // Implement blacklist or just clear context
-        SecurityContextHolder.clearContext();
-    }
-
-    @Override
-    public boolean validateToken(String token) {
-        try {
-            String userId = jwtUtil.extractUserId(token);
-            return jwtUtil.validateToken(userId);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public UserResponse getCurrentUser(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return mapToUserResponse(user);
-    }
-
-    private UserResponse mapToUserResponse(User user) {
         return new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole().name(),
-                user.getAvatar()
-            );
+                sub,
+                username,
+                email,
+                role,
+                null // avatar - không có trong JWT, để null hoặc thêm custom attribute
+        );
+    }
+
+    private String extractRole(Jwt jwt) {
+        // Nếu bạn cấu hình Cognito Groups thì JWT có claim "cognito:groups"
+        var groups = jwt.getClaimAsStringList("cognito:groups");
+        if (groups != null && !groups.isEmpty()) {
+            return groups.get(0); // ví dụ: "ADMIN" hoặc "USER"
+        }
+        return "USER";
     }
 }
